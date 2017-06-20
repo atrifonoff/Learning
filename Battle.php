@@ -23,7 +23,7 @@ class Battle
         $this ->playerOne = $playerOne;
         $this ->playerTwo = $playerTwo;
         $this ->rounds = $rounds;
-
+        $this ->winner;
 
     }
 
