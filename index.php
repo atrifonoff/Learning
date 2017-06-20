@@ -23,9 +23,9 @@ if(isset($_GET['start']))
     $battle = new Battle($player1,$player2);
     $battle ->start();
 
-    if($battle ->getRsult() === null)
+    if($battle ->getResult() === null)
     {
         echo 'Drow battle !';
-    } else{ echo 'The winner is: '.$battle ->getRsult() ->getName();}
+    } else{ echo 'The winner is: '.$battle ->getResult() ->getName();}
 }
 
