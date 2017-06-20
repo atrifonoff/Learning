@@ -1,5 +1,5 @@
 
-<form method="get" onsubmit="">
+<form method="get" >
 
     <input type="text" name="data" />
     <br>
