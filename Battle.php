@@ -42,7 +42,7 @@ class Battle
         }
 
 
-    public function getRsult()
+    public function getResult()
     {
         if($this ->playerOne ->isAlive() == $this ->playerTwo ->isAlive())
         {
