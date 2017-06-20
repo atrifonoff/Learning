@@ -46,7 +46,7 @@ class Battle
     {
         if($this ->playerOne ->isAlive() == $this ->playerTwo ->isAlive())
         {
-           return null;exit;
+           return null;
         }
         $winner = $this ->playerOne ->isAlive()
             ? $this ->playerOne
