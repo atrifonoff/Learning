@@ -68,7 +68,7 @@ class Player
     {
         if($player ->getId() == $this ->getId())
         {
-            throw new Exception('Cannot attack yourself!');
+            throw new Exception('Cannot attack yourself! ');
         }
         $player ->reduceHelt($this ->getAttack());
     }
