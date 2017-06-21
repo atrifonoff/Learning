@@ -34,7 +34,7 @@ class Forum
     /**
      * @var Answer[]
      */
-    //private $comments = [];
+    private $comments = [];
 
     /**
      * @var User
@@ -73,12 +73,13 @@ class Forum
                         $commandArgs[2]
                     );
                     break;
-//                case "comment":
-//                    $this ->comment(
-//                        intval($commandArgs[1]),
-//                        $commandArgs[2]
-//                    );
-//                    break;
+
+                case "comment":
+                    $this ->comment(
+                        intval($commandArgs[1]),
+                        $commandArgs[2]
+                    );
+                    break;
                 case "show":
                     $this ->show();
                     break;
@@ -98,11 +99,11 @@ class Forum
 
         $user = new User($username, $password);
         $this ->usersById[$user ->getId()] =$user;
-        $this ->usersByUsername[$username] = $username;
+        $this ->usersByUsername[$username] = $user;
 
     }
 
-    public function login($username,$pssword)
+    public function login($username,$password)
     {
         if(!array_key_exists($username,$this ->usersByUsername))
         {
@@ -110,13 +111,18 @@ class Forum
         }
         $user = $this ->usersByUsername[$username];
         $userPassword = $user ->getPassword();
-        if($userPassword != $pssword){
+        if($userPassword != $password){
             throw new Exception('Password missmatch');
         }
         $this ->curentUser = $user;
 
     }
 
+    /**
+     * @param $title
+     * @param $body
+     * @throws Exception
+     */
     public function ask($title,$body)
     {
         if(!$this ->curentUser){
@@ -124,6 +130,7 @@ class Forum
         }
         $question = new Question($title, $body, $this ->curentUser);
         $this ->questions[$question ->getId()] = $question;
+        $this ->curentUser ->askQuestion($question);
 
     }
 
@@ -139,27 +146,43 @@ class Forum
 
         $answer = new Answer($body, $this ->curentUser, $this ->questions[$questionId]);
         $this ->answers[$answer ->getId()] = $answer;
+        $this ->curentUser ->$answer( $this ->questions[$questionId]);
 
     }
 
-//    public function comment($answerId,$body)
-//    {
-//
-//        if(!$this ->curentUser){
-//            throw new Exception('Anonimus  commenting is nod alound');
-//        }
-//
-//        if(!array_key_exists($answerId, $this ->answers)){
-//            throw new Exception('Answer does not exist');
-//        }
-//
-//        $answer = $this ->answers[$answerId];
-//        $comment = new Answer($body, $this ->curentUser);
-//
-//    }
+    public function comment($answerId,$body)
+    {
+
+        if(!$this ->curentUser){
+            throw new Exception('Anonimus  commenting is nod alound');
+        }
+
+        if(!array_key_exists($answerId, $this ->answers)){
+            throw new Exception('Answer does not exist');
+        }
+
+        $answer = $this ->answers[$answerId];
+        $qestion = $answer ->getQuestion();
+
+        $comment = new Answer($body, $this ->curentUser,$qestion,$answer);
+        $this ->comments[$comment ->getId()] = $comment;
+        $this ->curentUser ->comment($comment,$answer);
+
+    }
 
     public function show()
     {
+        foreach ($this ->questions as $question)
+        {
+            echo "  --Question Title: ".$question ->getTitle()." Body:".$question ->getBody()."Autor: ".$question ->getAutor() ->getUsername(). PHP_EOL;
+           foreach ($question ->getAnswers() as $answer){
+               echo "      --- Answer Body: ".$answer ->getBody()." Autor: ".$answer ->getAutor() ->getUsername().PHP_EOL;
+               foreach ($answer ->getComments() as $comment){
+                   echo "            --- Comment Body: ".$answer ->getBody()." Autor: ".$answer ->getAutor() ->getUsername().PHP_EOL;
+
+               }
+           }
+        }
 
     }
 

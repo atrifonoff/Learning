@@ -145,6 +145,14 @@ class Answer
         return $this->id;
     }
 
+    /**
+     * @return Answer
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
 
 
 }

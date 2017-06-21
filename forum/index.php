@@ -53,3 +53,15 @@
  *
  */
 
+
+require_once 'Content/Answer.php';
+require_once 'Content/Question.php';
+require_once 'User/User.php';
+require_once 'forum.php';
+$forum = new Forum();
+
+try{
+    $forum ->start();
+}catch (Exception $e){
+    echo $e ->getMessage();
+  }

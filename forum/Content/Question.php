@@ -21,7 +21,7 @@ class Question
     /**
      * @var array Answer[]
      */
-    private $ansers = [];
+    private $answers = [];
 
     /**
      * Question constructor.
@@ -44,9 +44,9 @@ class Question
      * @param string $title
      * @throws Exception
      */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
-        if(strlen($title < self::TITLE_MIN_LENGHT)){
+        if(strlen($title) < self::TITLE_MIN_LENGHT){
             throw new Exception('Title is too short');
         }
         $this->title = $title;
@@ -66,7 +66,7 @@ class Question
      */
     public function setBody($body)
     {
-        if(strlen($body < self::BODY_MIN_LENGHT)){
+        if(strlen($body) < self::BODY_MIN_LENGHT){
             throw new Exception('Body is too short');
         }
         $this->body = $body;
@@ -109,9 +109,9 @@ class Question
     /**
      * @return array
      */
-    public function getAnser()
+    public function getAnswers()
     {
-        return $this ->ansers;
+        return $this ->answers;
     }
 
     /**
@@ -119,8 +119,9 @@ class Question
      */
     public function answer(Answer $answer)
     {
-        $this ->ansers = $answer;
+        $this ->answers = $answer;
     }
+
 
 }
 

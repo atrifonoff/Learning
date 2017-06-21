@@ -117,7 +117,10 @@ class User
      * Метод за даване на отговор на въпрос.
      * Параметрите са : оговори на въпрос ($question)  с (отговор $answer)
      */
-
+    /**
+     * @param Question $question
+     * @param Answer $answer
+     */
     public function answer(Question $question, Answer $answer)
     {
         $this ->answers[] = $answer; /* отговора $answer влиза в масива */
