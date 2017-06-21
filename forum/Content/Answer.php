@@ -43,6 +43,14 @@ class Answer
      */
     private $comments = [];
 
+    /**
+     * Answer constructor.
+     * @param $body
+     * @param User $autor
+     * @param Question $question
+     * @param Answer|null $answer
+     */
+
     public function __construct($body,
                                 User $autor,
                                 Question $question,
