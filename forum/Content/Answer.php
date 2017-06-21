@@ -129,4 +129,14 @@ class Answer
         $this ->comments[] = $answer;
     }
 
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+
+
 }

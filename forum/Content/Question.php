@@ -19,7 +19,7 @@ class Question
     private $autor;
 
     /**
-     * @var arrayAnswer[]
+     * @var Answer[]
      */
     private $ansers = [];
 
@@ -113,4 +113,3 @@ class Question
 
 }
 
-/* 20.06.17 16.50 home */

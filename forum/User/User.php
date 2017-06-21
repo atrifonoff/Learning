@@ -15,6 +15,25 @@ class User
         private $password;
 
     /**
+     * @var array Question[]
+     */
+
+    /* зададени въпроси */
+        private $questions = [];
+
+    /**
+     * @var array Answer[]
+     */
+    /* отговори */
+        private $answers = [];
+
+    /**
+     * @var Answer[]
+     */
+    /// коментари
+        private $comments = [];
+
+    /**
      * User constructor.
      * @param $username
      * @param $password
@@ -63,6 +82,69 @@ class User
         }
         $this->password = $password;
     }
+
+    /**
+     * @return array
+     */
+    public function getQuestions()
+    {
+        return $this->questions;
+    }
+
+
+    /**
+     * @param Question $question
+     * Метод за създаване на въпроси от потребителя и ги вкарва в масива qustions[]
+     */
+    public function askQuestion(Question $question)
+    {
+        $this ->questions[] = $question;
+    }
+
+
+    /**
+     * @return array
+     *
+     * метода получава отговор
+     */
+    public function getAnswers()
+    {
+        return $this ->answers;
+    }
+
+    /**
+     * Метод за даване на отговор на въпрос.
+     * Параметрите са : оговори на въпрос ($question)  с (отговор $answer)
+     */
+
+    public function answer(Question $question, Answer $answer)
+    {
+        $this ->answers[] = $answer; /* отговора $answer влиза в масива */
+        $question ->answer($answer);  /* въпроса получава отговора , който е влязъл като параметър $answer на функцията answeer() */
+    }
+
+    /**
+     * @return Answer[]
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    public function comment(Answer $comment, Answer $answer)
+    {
+        $this ->comments[] = $comment;
+        $answer ->comment($comment);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
 
 
 }

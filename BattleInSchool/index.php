@@ -7,8 +7,8 @@ require_once 'Battle.php';
 
 <form>
 
-   Player 1 name:  <input type="text" name="player_one_name" /><br>
-    Player 2 name:  <input type="text" name="player_two_name" /><br>
+   Player 1 name:  <input type="text" name="player_one_name" title="" /><br>
+    Player 2 name:  <input type="text" name="player_two_name" title="" /><br>
     <input type="submit" name="start" value="Start Battle">
 
 
