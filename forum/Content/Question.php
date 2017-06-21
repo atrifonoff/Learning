@@ -19,15 +19,15 @@ class Question
     private $autor;
 
     /**
-     * @var arrayAnswer[]
+     * @var array Answer[]
      */
     private $ansers = [];
 
     /**
      * Question constructor.
-     * @param $title
-     * @param $body
-     * @param $autor
+     * @param string $title
+     * @param string $body
+     * @param User $autor
      */
     public function __construct( $title,
                                  $body,
@@ -41,18 +41,19 @@ class Question
     }
 
     /**
-     * @param mixed $title
+     * @param string $title
+     * @throws Exception
      */
     public function setTitle($title)
     {
-        if(strlen($title > self::TITLE_MIN_LENGHT)){
+        if(strlen($title < self::TITLE_MIN_LENGHT)){
             throw new Exception('Title is too short');
         }
         $this->title = $title;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -60,18 +61,20 @@ class Question
     }
 
     /**
-     * @param mixed $body
+     * @param string $body
+     * @throws Exception
      */
     public function setBody($body)
     {
-        if(strlen($body > self::BODY_MIN_LENGHT)){
+        if(strlen($body < self::BODY_MIN_LENGHT)){
             throw new Exception('Body is too short');
         }
         $this->body = $body;
     }
 
     /**
-     * @return mixed
+     * @return string
+     *
      */
     public function getBody()
     {
@@ -95,17 +98,25 @@ class Question
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
+
+    /**
+     * @return array
+     */
     public function getAnser()
     {
         return $this ->ansers;
     }
+
+    /**
+     * @param Answer $answer
+     */
     public function answer(Answer $answer)
     {
         $this ->ansers = $answer;
@@ -113,4 +124,3 @@ class Question
 
 }
 
-/* 20.06.17 16.50 home */

@@ -27,7 +27,7 @@ class User
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUsername()
     {
@@ -35,7 +35,7 @@ class User
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPassword()
     {
@@ -43,7 +43,7 @@ class User
     }
 
     /**
-     * @param mixed $username
+     * @param string $username
      */
     public function setUsername($username)
     {
@@ -51,7 +51,8 @@ class User
     }
 
     /**
-     * @param mixed $password
+     * @param string $password
+     * @throws Exception
      */
     public function setPassword($password)
     {
