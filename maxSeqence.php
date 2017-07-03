@@ -29,6 +29,6 @@ foreach ($sequences as $key){
 }
 //print_r($sequences);
 //print_r($maxSequens);
-echo "\n".str_repeat($maxSequens['element']." ",$maxSequens['cout']) ;
+echo "\n".str_repeat($maxSequens['element']." ",$maxSequens['cout']).PHP_EOL.$maxSequens['cout'].' members' ;
 
 ?>

@@ -1,9 +1,9 @@
 
 <form method="get" >
 
-    <input type="text" name="data" />
+    Input the text:<input type="text" name="data" />
     <br>
-    <input type="text" name="coll" />
+    number of collums:<input type="text" name="coll" />
     <input type="submit" value="colls"/>
 </form>
 
@@ -14,7 +14,7 @@ if(isset($_GET['coll'])):
     $i=0;
     $colls=($_GET['coll']-1);
     $rows=ceil($elementCount/($colls+1));
-
+    $array = [];
     for($r=0;$r<=$rows-1;$r++){
         for($c=0;$c<=$colls;$c++){
 
