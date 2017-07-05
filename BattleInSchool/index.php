@@ -5,7 +5,7 @@ require_once 'Battle.php';
 
 ?>
 
-<form>
+<form method="get" action="index.php" title=" " >
 
    Player 1 name:  <input type="text" name="player_one_name" title="" /><br>
     Player 2 name:  <input type="text" name="player_two_name" title="" /><br>

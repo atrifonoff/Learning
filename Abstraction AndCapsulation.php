@@ -5,6 +5,7 @@
  * Date: 03.07.17
  * Time: 22:41
  */
+
 class User
 {
     private $username;
