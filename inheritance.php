@@ -12,11 +12,24 @@ class Currency
 
     private $amount;
 
+    /**
+     * Currency constructor.
+     * @param $rate
+     * @param $amount
+     */
+    public function __construct($rate, $amount)
+    {
+        $this->rate = $rate;
+        $this->amount = $amount;
+    }
+
+
 }
 
 
 class BGN extends Currency
 {
+
 
 }
 
@@ -99,7 +112,7 @@ class Gas extends Fuel
      */
     public function setPressure($pressure)
     {
-        $this->setWeight(
+        $this->setWeight(                         //понеже setWeight-а е protekted , това позволява да се одработва от децата//
         $this->getWeight() + (0.5* $pressure));
         $this->pressure = $pressure;
 
