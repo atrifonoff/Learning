@@ -22,10 +22,16 @@ class Car
     public $fuelCost;
     public $distanceTavelled;
 
+    /**
+     * Car constructor.
+     * @param string $model
+     * @param float $fuelAmound
+     * @param float $fuelCost
+     */
 
-    public  function __construct(string $model,
-                                 float $fuelAmound,
-                                 float $fuelCost)
+    public  function __construct($model,
+                                 $fuelAmound,
+                                 $fuelCost)
     {
         $this ->model = $model;
         $this ->fuelAmount = $fuelAmound;
@@ -38,7 +44,7 @@ class Car
      * @param float $km
      * @throws Exception
      */
-    public  function drive(float $km)
+    public  function drive($km)
     {
         $cost = $km * $this ->fuelCost;
         if ($cost > $this ->fuelAmount){
@@ -78,7 +84,7 @@ while ($n--)
 
 }
 
-
+echo 'Input: < command > < model car > < km > '."\n";
 
 $cmd = trim(fgets(STDIN));
 

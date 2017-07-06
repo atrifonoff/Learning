@@ -5,8 +5,16 @@
  * Date: 05.07.17
  * Time: 22:32
  */
+function vardumpWithPre(array $arr){
+    echo '<pre>';
+    var_dump($arr);
+    echo '</pre>';
+}
 
-class drink
+
+
+
+class Drink
 {
     private $drinks = [];
 
@@ -54,13 +62,9 @@ class CarbonetetDrink
 
 
 
-
-
-
-
-
-
-
-
-
 }
+
+
+$drink = new Drink('orange','1.5l', '1.80lw');
+$drinks[] = $drink;
+vardumpWithPre($drinks);
