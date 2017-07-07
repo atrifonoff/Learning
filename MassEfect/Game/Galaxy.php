@@ -10,7 +10,16 @@
 namespace Game;
 
 
+use Game\StarSystems\StarSystemInterface;
+
 class Galaxy
 {
+    private $starSystems = [];
+
+//    public function getStarSystem($name) : StarSystemInterface
+//
+//    {
+//        return
+//    }
 
 }

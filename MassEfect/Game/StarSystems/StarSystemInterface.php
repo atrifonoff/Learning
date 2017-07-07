@@ -12,4 +12,6 @@ namespace Game\StarSystems;
 interface StarSystemInterface
 {
 
+    public function addNeighbour($solarSystemName, $fuelNeeded);
+
 }
