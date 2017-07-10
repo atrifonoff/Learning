@@ -8,18 +8,30 @@
  */
 
 namespace Game;
-
-
 use Game\StarSystems\StarSystemInterface;
 
-class Galaxy
+
+class Galaxy implements GalaxyInterface
 {
+    /**
+     * @var array StarSystemIterface[]
+     */
     private $starSystems = [];
 
-//    public function getStarSystem($name) : StarSystemInterface
-//
-//    {
-//        return
-//    }
+    /**
+     * @param $name
+     */
+    public function getStarSystem($name)
+
+    {
+        return $this->starSystems[$name];
+    }
+
+
+    public function addStarSystem($name,StarSystemInterface $starSystem)
+
+    {
+        $this->starSystems[$name]=$starSystem;
+    }
 
 }

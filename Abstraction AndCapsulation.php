@@ -72,6 +72,8 @@ class Forum
                     $user ->setPassword($newPassword);
                     var_dump($this ->users);
                     break;
+                case 'end':
+                    exit;
 
             }
         }

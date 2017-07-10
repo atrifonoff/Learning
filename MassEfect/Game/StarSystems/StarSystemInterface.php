@@ -14,4 +14,6 @@ interface StarSystemInterface
 
     public function addNeighbour($solarSystemName, $fuelNeeded);
 
+    public function getName();
+
 }
