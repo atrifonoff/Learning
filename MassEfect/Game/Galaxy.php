@@ -1,37 +1,43 @@
 <?php
-
-/**
- * Created by PhpStorm.
- * User: krisko
- * Date: 07.07.17
- * Time: 17:52
- */
-
 namespace Game;
-use Game\StarSystems\StarSystemInterface;
 
+use Entites\Ships\ShipInterface;
+use Game\StarSystems\StarSystemInterface;
 
 class Galaxy implements GalaxyInterface
 {
     /**
-     * @var array StarSystemIterface[]
+     * @var StarSystemInterface[]
      */
     private $starSystems = [];
 
     /**
-     * @param $name
+     * @var ShipInterface[]
      */
-    public function getStarSystem($name)
+    private $ships = [];
 
+    public function getStarSystem($name): StarSystemInterface
     {
         return $this->starSystems[$name];
     }
 
-
-    public function addStarSystem($name,StarSystemInterface $starSystem)
-
+    public function addStarSystem($name, StarSystemInterface $starSystem)
     {
-        $this->starSystems[$name]=$starSystem;
+        $this->starSystems[$name] = $starSystem;
     }
 
+    public function shipExists($name): bool
+    {
+        return array_key_exists($name, $this->ships);
+    }
+
+    public function addShip(ShipInterface $ship)
+    {
+        $this->ships[$ship->getName()] = $ship;
+    }
+
+    public function getShip($name): ShipInterface
+    {
+        return $this->ships[$name];
+    }
 }

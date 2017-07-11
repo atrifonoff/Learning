@@ -1,39 +1,61 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: angel
- * Date: 09.07.17
- * Time: 10:55
- */
+
 
 namespace Game\StarSystems;
 
 
+use Entites\Ships\ShipInterface;
+
 class StarSystem implements StarSystemInterface
 {
+
     private $neighbours = [];
 
     private $name;
 
     /**
-     * StarSystem constructor.
-     * @param $name
+     * @var ShipInterface[]
      */
+    private $ships = [];
+
     public function __construct($name)
     {
         $this->name = $name;
     }
 
 
-    public function addNeighbour($solarSystemName, $fuelNeeded)
-{
-    $this->neighbours[$solarSystemName] = $fuelNeeded;
+    public function addNeighbour($solarSystemName, $fuelNeeded): StarSystemInterface
+    {
+        $this->neighbours[$solarSystemName] = $fuelNeeded;
 
-}
-public function getName()
-{
-    return $this->name;
-}
+        return $this;
+    }
 
+    public function getName()
+    {
+        return $this->name;
+    }
 
+    public function getShip($name): ShipInterface
+    {
+        return $this->ships[$name];
+    }
+
+    public function addShip(ShipInterface $ship)
+    {
+        $name = $ship->getName();
+        $this->ships[$name] = $ship;
+    }
+
+    public function travelTo($shipName, StarSystemInterface $starSystem)
+    {
+        $ship = $this->ships[$shipName];
+        unset($this->ships[$shipName]);
+        $fuelNeeded = $this->neighbours[$starSystem->getName()];
+        $ship->setFuel(
+            $ship->getFuel() - $fuelNeeded
+        );
+        $ship->jumpTo($starSystem);
+        $starSystem->addShip($ship);
+    }
 }
