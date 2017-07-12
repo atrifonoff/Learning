@@ -59,7 +59,7 @@ class Galaxy implements GalaxyInterface
      * @param $name
      * @return ShipInterface
      */
-    public function getShip($name)
+    public function getShip($name): ShipInterface
     {
         return $this->ships[$name];
     }

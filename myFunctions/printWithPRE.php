@@ -8,6 +8,8 @@
 
 /* Декларирам си функции за по -добра визия при отпечатване на масиви  */
 
+
+
 function printrWithPre(array $arr){
     echo '<pre>';
     print_r($arr);

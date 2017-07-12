@@ -26,7 +26,7 @@ class AttackCommand extends CommandAbstract
         $defender = $this->galaxy->getShip($defenderName);
 
         if (!$attacker->isAlive() || !$defender->isAlive()) {
-            throw new \Exception("Ship is destroyed");
+            throw new \Exception("Ship is destroyed 1");
         }
 
         if ($attacker->getStarSystem() != $defender->getStarSystem()) {
@@ -38,7 +38,7 @@ class AttackCommand extends CommandAbstract
         $output = "$attackerName attacked $defenderName";
 
         if (!$defender->isAlive()) {
-            $output .= PHP_EOL . "$defenderName has been destroyed";
+            $output .= PHP_EOL . "$defenderName has been destroyed !";
         }
 
         return $output;
