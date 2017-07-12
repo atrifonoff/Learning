@@ -38,7 +38,7 @@ class AttackCommand extends CommandAbstract
         $output = "$attackerName attacked $defenderName";
 
         if (!$defender->isAlive()) {
-            $output .= PHP_EOL . "$defenderName has been destroyed !";
+            $output .= PHP_EOL . "$defenderName has been destroyed !!!";
         }
 
         return $output;
