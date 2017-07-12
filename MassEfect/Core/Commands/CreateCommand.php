@@ -7,9 +7,18 @@ namespace Core\Commands;
 use Entites\Ships\Cruiser;
 use Entites\Ships\Frigate;
 
+/**
+ * Class CreateCommand
+ * @package Core\Commands
+ */
 class CreateCommand extends CommandAbstract
 {
 
+    /**
+     * @param array $args
+     * @return string
+     * @throws \Exception
+     */
     public function execute(array $args = []): string
     {
         array_shift($args);

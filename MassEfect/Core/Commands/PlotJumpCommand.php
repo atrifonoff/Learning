@@ -4,10 +4,19 @@
 namespace Core\Commands;
 
 
+/**
+ * Class PlotJumpCommand
+ * @package Core\Commands
+ */
 class PlotJumpCommand extends CommandAbstract
 {
 
-    public function execute(array $args = []): string
+    /**
+     * @param array $args
+     * @return string
+     * @throws \Exception
+     */
+    public function execute(array $args = [])
     {
         array_shift($args);
         $shipName = array_shift($args);

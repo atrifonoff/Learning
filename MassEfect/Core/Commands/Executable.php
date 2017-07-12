@@ -4,7 +4,15 @@
 namespace Core\Commands;
 
 
+/**
+ * Interface Executable
+ * @package Core\Commands
+ */
 interface Executable
 {
-    public function execute(array $args = []): string;
+    /**
+     * @param array $args
+     * @return mixed
+     */
+    public function execute(array $args = []);
 }
