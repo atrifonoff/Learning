@@ -1,4 +1,10 @@
 <?php
+
+function vardumpWithPre(array $arr){
+    echo '<pre>';
+    var_dump($arr);
+    echo '</pre>';
+}
 /**
  * Created by PhpStorm.
  * User: krisko
@@ -21,6 +27,10 @@
 <!--</div>-->
 <!---->
 <?php
+
+vardumpWithPre($__SERVER);
+
+
 //$cars =[];
 //if (isset($_GET['submit'])) {
 //    echo $_GET['car'];

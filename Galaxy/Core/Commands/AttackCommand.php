@@ -4,10 +4,19 @@
 namespace Core\Commands;
 
 
+/**
+ * Class AttackCommand
+ * @package Core\Commands
+ */
 class AttackCommand extends CommandAbstract
 {
 
-    public function execute(array $args = []): string
+    /**
+     * @param array $args
+     * @return string
+     * @throws \Exception
+     */
+    public function execute(array $args = [])
     {
         array_shift($args);
         $attackerName = array_shift($args);

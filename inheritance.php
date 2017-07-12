@@ -48,6 +48,26 @@ class Fuel
      */
     private $price;
 
+    protected function setWeight($weight) // с модификатор protkted се указва ,
+                                             // че функциятa е достъпна само
+                                                // за децата//
+    {
+        $this->weight = $weight;
+    }
+
+    /**
+     * @param mixed $price
+     */
+    protected function setPrice( $price)
+    {
+        if ($price < 0){
+            throw new Exception('The price could not be negative');
+        }
+
+        $this->price = $price;
+    }
+
+
     /**
      * Fuel constructor.
      * @param $weight
@@ -70,24 +90,6 @@ class Fuel
         return $this->price;
     }
 
-    protected function setWeight($weight) // с модификатор protkted се указва ,
-                                         // че функциятa е достъпна само
-                                         // за децата//
-    {
-        $this->weight = $weight;
-    }
-
-    /**
-     * @param mixed $price
-     */
-    protected function setPrice( $price)
-    {
-        if ($price < 0){
-            throw new Exception('The price could not be negative');
-        }
-
-        $this->price = $price;
-    }
 
 
 
