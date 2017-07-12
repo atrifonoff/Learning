@@ -7,16 +7,41 @@ namespace Game;
 use Entites\Ships\ShipInterface;
 use Game\StarSystems\StarSystemInterface;
 
+/**
+ * Interface GalaxyInterface
+ * @package Game
+ */
 interface GalaxyInterface
 {
-    public function getStarSystem($name): StarSystemInterface;
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function getStarSystem($name);
 
+    /**
+     * @param $name
+     * @param StarSystemInterface $starSystem
+     * @return mixed
+     */
     public function addStarSystem($name, StarSystemInterface $starSystem);
 
-    public function shipExists($name): bool;
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function shipExists($name);
 
+    /**
+     * @param ShipInterface $ship
+     * @return mixed
+     */
     public function addShip(ShipInterface $ship);
 
+    /**
+     * @param $name
+     * @return ShipInterface
+     */
     public function getShip($name): ShipInterface;
 
 }
