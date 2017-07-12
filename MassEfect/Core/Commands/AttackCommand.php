@@ -26,7 +26,7 @@ class AttackCommand extends CommandAbstract
         $defender = $this->galaxy->getShip($defenderName);
 
         if (!$attacker->isAlive() || !$defender->isAlive()) {
-            throw new \Exception("Ship is destroyed");
+            throw new \Exception("Ship is destroyed 1");
         }
 
         if ($attacker->getStarSystem() != $defender->getStarSystem()) {
