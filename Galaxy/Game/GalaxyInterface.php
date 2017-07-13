@@ -40,8 +40,8 @@ interface GalaxyInterface
 
     /**
      * @param $name
-     * @return ShipInterface
+     * @return mixed
      */
-    public function getShip($name): ShipInterface;
+    public function getShip($name);
 
 }
