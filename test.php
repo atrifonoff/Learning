@@ -4,21 +4,23 @@
 //
 //fclose($myfile);
 $emptyLineCounter = 0;
-$handle = fopen("datework.php", "r");
+$numericFiles = array();
+$handle = fopen("forTests.php", "r");
 if ($handle) {
     while (($line = fgets($handle)) !== false) {
 
-        if((trim($line == NULL))){
-            echo 'empty'.$line."<br>";
+        if((trim($line) == NULL)){
             $emptyLineCounter ++;
 
         }
 
     }
+
     fclose($handle);
 
 } else {
-    echo 'error opening the file.';}
+    //echo 'error opening the file.';
+}
 
 echo 'Empty lines = '.$emptyLineCounter;
 
