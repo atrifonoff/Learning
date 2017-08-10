@@ -14,13 +14,14 @@ class myself_Codebase extends core_Manager
 
     public $loadList = 'plg_Created,plg_Modified';
 
-    public $listFields = 'id,path,lines,modifiedOn=Модифициране';
+    public $listFields = 'id,path,lines,phpClasses,modifiedOn=Модифициране';
 
     protected function description()
     {
-        $this->FLD('path', 'varchar(255)','caption=Път');
+        $this->FLD('path', 'varchar','caption=Път');
         $this->FLD('code', 'text(1000000)', 'caption=Код,column=none');
         $this->FLD('lines', 'int', 'caption=Брой линии');
+        $this->FLD('phpClasses','int','caption=PHP класове');
 
         $this->setDbUnique('path');
 
@@ -43,6 +44,7 @@ class myself_Codebase extends core_Manager
 
     function act_ReadFiles()
     {
+
         //Установява необходима роля за да се стартира екшъна //
         requireRole('admin');
 
@@ -52,16 +54,28 @@ class myself_Codebase extends core_Manager
         $root = realpath(__DIR__ . DIRECTORY_SEPARATOR. '..' );
 
         $files = array();
+        $totalLines = 0;
+        $totalLoadClasses = 0;
+        $filesCounter = 0;
+        $emptyLineCounter = 0;
 
         self::readFiles($root, $files);
 
-        $totalLines = 0;
-
         foreach($files as $f) {
+
+            if(self::loadClasses($root,$f)) {
+
+                $totalLoadClasses++;
+
+            }
+
+            $filesCounter++;
+
+
             $exRec = self::fetch("#path = '{$f}'");
 
-
             $rec = new stdClass();
+
             if(isset($exRec)) {
                 $rec->id = $exRec->id;
             }
@@ -76,12 +90,21 @@ class myself_Codebase extends core_Manager
                 $totalLines += $rec->lines;
             }
 
+            $emptyLineCounter+=self::emptyLineCounter($f);
+
             self::save($rec);
+            if($filesCounter >= 70)bp('Брой заредени класове :'.$totalLoadClasses,'Общ брой файлове :'.$filesCounter,'Брой редове :'.$totalLines,'Брой празни редове :'.$emptyLineCounter);
+
         }
 
-        return 'Общо линии: '. $totalLines;
+        return 'Брой линии : '.$totalLines."<br>".'Брой празни редове :'.$emptyLineCounter.'<br>'.'Общо файлове :'.$filesCounter.'<br>'.' Брой заредени класове  : '.$totalLoadClasses."<br>";
     }
 
+
+    /**
+     * @param $root
+     * @param array $files
+     */
     static function readFiles($root, &$files = array())
     {
         if ($handle = opendir($root)) {
@@ -106,5 +129,61 @@ class myself_Codebase extends core_Manager
         }
     }
 
+    /**
+     * @param $root
+     * @param $f
+     * @return bool
+     */
+    static function loadClasses ($root,$f)
+    {
+        $ext = fileman_Files::getExt($f);
+
+        $classLoadResult = FALSE;
+
+        if(($ext === 'php') && (bool)strpos($f,'.class.php')) {
+            $className = str_replace($root, '', $f);
+
+
+            $className = str_replace(DIRECTORY_SEPARATOR, '_', trim($className, DIRECTORY_SEPARATOR));
+
+            $className = str_replace(".class.php", '', $className);
+
+            try {
+
+                @cls::load($className,TRUE);
+
+                $classLoadResult = TRUE;
+
+            } catch (Error $e) {
+
+            }
+
+        }
+        return $classLoadResult;
+
+    }
+
+    /**
+     * @param $f
+     * @return int
+     */
+    static function emptyLineCounter ($f)
+    {
+        $emptyLine = 0;
+        $handle = fopen("$f", "r");
+        if ($handle) {
+            while (($line = fgets($handle)) !== false) {
+                if((trim($line) == NULL)){
+                    $emptyLine++;
+                }
+            }
+            fclose($handle);
+        } else {
+            return 'Error opening file';
+        }
+
+        return $emptyLine;
+
+    }
 
 }
