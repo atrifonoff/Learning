@@ -152,7 +152,9 @@ foreach ($names as $name){
         $result[]=$name;
     }
 }
+$countArr = count($result);
 printrWithPre($result);
-
+echo '<br>';
+echo '<li>'.'Members of result'.$countArr;
 
 ?>
