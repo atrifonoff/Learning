@@ -3,27 +3,9 @@
 //echo fread($myfile,filesize("datework.php"));
 //
 //fclose($myfile);
-$emptyLineCounter = 0;
-$numericFiles = array();
-$handle = fopen("forTests.php", "r");
-if ($handle) {
-    while (($line = fgets($handle)) !== false) {
-
-        if((trim($line) == NULL)){
-            $emptyLineCounter ++;
-
-        }
-
-    }
-
-    fclose($handle);
-
-} else {
-    //echo 'error opening the file.';
-}
-
-echo 'Empty lines = '.$emptyLineCounter;
 
 
 
 
+Reflection::export(new ReflectionClass('Exception'));
+?>
