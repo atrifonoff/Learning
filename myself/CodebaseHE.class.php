@@ -1,5 +1,4 @@
 <?php
-
 class myself_Codebase extends core_Manager
 {
     public $title = "Анализ";
@@ -10,7 +9,6 @@ class myself_Codebase extends core_Manager
         $this->FLD('path', 'varchar','caption=Път');
         $this->FLD('code', 'text(1000000)', 'caption=Код,column=none');
         $this->FLD('lines', 'int', 'caption=Брой линии');
-        $this->FLD('phpClasses','int','caption=PHP класове');
         $this->setDbUnique('path');
     }
     /**
@@ -34,54 +32,43 @@ class myself_Codebase extends core_Manager
         //В случая __DIR__ намира директорията на текущия файл и след това
         // DIRECTORY_SEPARATOR.'..' връща една dir назад//
         $root = realpath(__DIR__ . DIRECTORY_SEPARATOR. '..' );
-
         $files = array();
         $methods = array();
+        $usesMetods = array();
+        $couldntLoadsClasses=array();
         $totalLines = 0;
         $totalLoadClasses = 0;
         $filesCounter = 0;
         $emptyLineCounter = 0;
         $totalMethods = 0;
-
         self::readFiles($root, $files);
-
         foreach($files as $f) {
-
             $filesCounter++;
-
-            if(self::loadClasses($root,$f,$methods)) {
+            if(self::loadClasses($root, $f, $methods, $couldntLoadsClasses)) {
 
                 $totalLoadClasses++;
 
-                $totalMethods = (count($methods,COUNT_RECURSIVE) - count($methods,COUNT_NORMAL));
+                $usesMetods = array_merge($usesMetods, $methods);
 
+                $totalMethods += count($methods);
             }
-
             $exRec = self::fetch("#path = '{$f}'");
-
             $rec = new stdClass();
-
             if(isset($exRec)) {
                 $rec->id = $exRec->id;
             }
-
             $rec->path = $f;
-
             $ext = fileman_Files::getExt($f);
-
             if(in_array($ext, array('php', 'js', 'shtml', 'scss'))) {
                 $rec->code = file_get_contents($f);
                 $rec->lines = substr_count($rec->code, "\n");
                 $totalLines += $rec->lines;
             }
-
             $emptyLineCounter+=self::emptyLineCounter($f);
-
             self::save($rec);
-
-            if($filesCounter >= 70)bp('Брой заредени класове :'.$totalLoadClasses,'Общ брой файлове :'
+            if($filesCounter >= 190) bp('Брой заредени класове :'.$totalLoadClasses,'Общ брой файлове :'
                 .$filesCounter,'Брой редове :'.$totalLines,'Брой празни редове :'.$emptyLineCounter,
-                'Брой методи :'.$totalMethods);
+                'Брой методи :'.$totalMethods,'Не успях да заредя следните класове :',$couldntLoadsClasses);
         }
         return 'Брой линии : '.$totalLines."<br>".'Брой празни редове :'.$emptyLineCounter
         .'<br>'.'Общо файлове :'.$filesCounter.'<br>'.' Брой заредени класове  : '.$totalLoadClasses
@@ -106,31 +93,48 @@ class myself_Codebase extends core_Manager
             closedir($handle);
         }
     }
-
     /**
      * @param $root
      * @param $f
      * @param array $methods
      * @return bool
+     * @param array $couldntLoadsClasses
      */
-    static function loadClasses ($root,$f, &$methods=array())
+    static function loadClasses($root, $f, &$methods=array(),&$couldntLoadsClasses=array())
     {
         $ext = fileman_Files::getExt($f);
+
         $classLoadResult = FALSE;
+
         if(($ext === 'php') && (bool)strpos($f,'.class.php')) {
-            $className = str_replace($root, '', $f);
-            $className = str_replace(DIRECTORY_SEPARATOR, '_', trim($className, DIRECTORY_SEPARATOR));
-            $className = str_replace(".class.php", '', $className);
+
+        }
+        $className = str_replace($root, '', $f);
+
+        $className = str_replace(DIRECTORY_SEPARATOR, '_', trim($className, DIRECTORY_SEPARATOR));
+
+        $className = str_replace(".class.php", '', $className);
+
+        if(@cls::load($className,TRUE)) {
+            ;
+            $classLoadResult = TRUE;
 
             $class = new ReflectionClass($className);
-            $methods[] = $class->getMethods();
 
-            try {
-                @cls::load($className,TRUE);
-                $classLoadResult = TRUE;
-            } catch (Error $e) {
+            $methods = $class->getMethods();
+
+            foreach($methods as $id => $m) {
+
+                if(strtolower(trim($m->class)) != strtolower(trim($className))) {
+
+                    unset($methods[$id]);
+                }
             }
-        }
+
+
+
+        } else {$couldntLoadsClasses[] = $className;}
+
         return $classLoadResult;
     }
     /**
