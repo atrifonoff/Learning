@@ -21,6 +21,17 @@ class myself_Codebase extends core_Manager
     {
         $data->toolbar->addBtn('Анализ', array($mvc, 'ReadFiles'));
     }
+
+    function act_FileProcessing()
+    {
+
+        echo 'File processing';
+        bp();
+    }
+
+
+
+
     /**
      * @return string
      */
@@ -34,11 +45,16 @@ class myself_Codebase extends core_Manager
         $root = realpath(__DIR__ . DIRECTORY_SEPARATOR. '..' );
         $files = array();
         $methods = array();
+        $usesMetods = array();
         $totalLines = 0;
         $totalLoadClasses = 0;
         $filesCounter = 0;
         $emptyLineCounter = 0;
         $totalMethods = 0;
+
+        $this->act_FileProcessing();
+
+
 
         self::readFiles($root, $files);
 
@@ -46,12 +62,13 @@ class myself_Codebase extends core_Manager
 
             $filesCounter++;
 
-            if(self::loadClasses($root, $f, $methods)) {
+            if(self::loadClasses($root, $f, $methods, $couldntLoadsClasses)) {
 
                 $totalLoadClasses++;
 
-                //  $totalMethods += count($methods[0]);
-                $totalMethods = (count($methods,COUNT_RECURSIVE) - count($methods,COUNT_NORMAL));
+                $usesMetods = array_merge($usesMetods, $methods);
+
+                $totalMethods += count($methods);
             }
 
             $exRec = self::fetch("#path = '{$f}'");
@@ -79,9 +96,9 @@ class myself_Codebase extends core_Manager
 
             self::save($rec);
 
-            if($filesCounter >= 1) bp('Брой заредени класове :'.$totalLoadClasses,'Общ брой файлове :'
+            if($filesCounter >= 190) bp('Брой заредени класове :'.$totalLoadClasses,'Общ брой файлове :'
                 .$filesCounter,'Брой редове :'.$totalLines,'Брой празни редове :'.$emptyLineCounter,
-                'Брой методи :'.$totalMethods);
+                'Брой методи :'.$totalMethods,'Не успях да заредя следните PHP-класове :'.$couldntLoadsClasses);
 
         }
 
@@ -120,8 +137,11 @@ class myself_Codebase extends core_Manager
      * @param array $methods
      * @return bool
      */
-    static function loadClasses($root, $f, &$methods=array())
+
+    static function loadClasses($root, $f, &$methods=array(),&$couldntLoadsClasses=array())
     {
+        //    return array('isLoaded' => TRUE, 'methods' => array(...));
+
         $ext = fileman_Files::getExt($f);
 
         $classLoadResult = FALSE;
@@ -134,30 +154,22 @@ class myself_Codebase extends core_Manager
 
             $className = str_replace(".class.php", '', $className);
 
-            $class = new ReflectionClass($className);
-
-            $methods[] = $class->getMethods();
-
-            foreach($methods[0] as $id => $m) {
-                if(strtolower(trim($m->class)) != strtolower(trim($className))) {
-                    unset($methods[0][$id]);
-                }
-                bp($methods);
-            }
-
-
-            try {
-                @cls::load($className,TRUE);
-
+            if (@cls::load($className, TRUE)) {
+                ;
                 $classLoadResult = TRUE;
-
-            } catch (Error $e) {
+                $class = new ReflectionClass($className);
+                $methods = $class->getMethods();
+                foreach ($methods as $id => $m) {
+                    if (strtolower(trim($m->class)) != strtolower(trim($className))) {
+                        unset($methods[$id]);
+                    }
+                }
+            } else {
+                $couldntLoadsClasses[] = $className;
             }
         }
-
         return $classLoadResult;
     }
-
 
     /**
      * @param string $f
