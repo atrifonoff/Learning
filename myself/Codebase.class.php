@@ -1,32 +1,16 @@
 <?php
-
-/**
- * Created by PhpStorm.
- * User: krisko
- * Date: 30.06.17
- * Time: 18:24
- */
 class myself_Codebase extends core_Manager
 {
-
-
     public $title = "Анализ";
-
     public $loadList = 'plg_Created,plg_Modified';
-
     public $listFields = 'id,path,lines,phpClasses,modifiedOn=Модифициране';
-
     protected function description()
     {
         $this->FLD('path', 'varchar','caption=Път');
         $this->FLD('code', 'text(1000000)', 'caption=Код,column=none');
         $this->FLD('lines', 'int', 'caption=Брой линии');
-        $this->FLD('phpClasses','int','caption=PHP класове');
-
         $this->setDbUnique('path');
-
     }
-
     /**
      * Преди показване на листовия тулбар
      *
@@ -37,46 +21,45 @@ class myself_Codebase extends core_Manager
     {
         $data->toolbar->addBtn('Анализ', array($mvc, 'ReadFiles'));
     }
-
     /**
      * @return string
      */
-
     function act_ReadFiles()
     {
-
         //Установява необходима роля за да се стартира екшъна //
         requireRole('admin');
-
         //В $root запомняме директорията от която трябва да стартира екшъна.
         //В случая __DIR__ намира директорията на текущия файл и след това
         // DIRECTORY_SEPARATOR.'..' връща една dir назад//
         $root = realpath(__DIR__ . DIRECTORY_SEPARATOR. '..' );
-
         $files = array();
+        $methods = array();
         $totalLines = 0;
         $totalLoadClasses = 0;
         $filesCounter = 0;
         $emptyLineCounter = 0;
+        $totalMethods = 0;
 
         self::readFiles($root, $files);
 
         foreach($files as $f) {
 
-            if(self::loadClasses($root,$f)) {
+            $filesCounter++;
+
+            if(self::loadClasses($root, $f, $methods)) {
 
                 $totalLoadClasses++;
 
+                //  $totalMethods += count($methods[0]);
+                $totalMethods = (count($methods,COUNT_RECURSIVE) - count($methods,COUNT_NORMAL));
             }
-
-            $filesCounter++;
-
 
             $exRec = self::fetch("#path = '{$f}'");
 
             $rec = new stdClass();
 
             if(isset($exRec)) {
+
                 $rec->id = $exRec->id;
             }
 
@@ -85,22 +68,27 @@ class myself_Codebase extends core_Manager
             $ext = fileman_Files::getExt($f);
 
             if(in_array($ext, array('php', 'js', 'shtml', 'scss'))) {
+
                 $rec->code = file_get_contents($f);
+
                 $rec->lines = substr_count($rec->code, "\n");
+
                 $totalLines += $rec->lines;
             }
-
             $emptyLineCounter+=self::emptyLineCounter($f);
 
             self::save($rec);
-            if($filesCounter >= 70)bp('Брой заредени класове :'.$totalLoadClasses,'Общ брой файлове :'.$filesCounter,'Брой редове :'.$totalLines,'Брой празни редове :'.$emptyLineCounter);
+
+            if($filesCounter >= 1) bp('Брой заредени класове :'.$totalLoadClasses,'Общ брой файлове :'
+                .$filesCounter,'Брой редове :'.$totalLines,'Брой празни редове :'.$emptyLineCounter,
+                'Брой методи :'.$totalMethods);
 
         }
 
-        return 'Брой линии : '.$totalLines."<br>".'Брой празни редове :'.$emptyLineCounter.'<br>'.'Общо файлове :'.$filesCounter.'<br>'.' Брой заредени класове  : '.$totalLoadClasses."<br>";
+        return 'Брой линии : '.$totalLines."<br>".'Брой празни редове :'.$emptyLineCounter
+        .'<br>'.'Общо файлове :'.$filesCounter.'<br>'.' Брой заредени класове  : '.$totalLoadClasses
+        ."<br>".'Брой методи : '.$totalMethods;
     }
-
-
     /**
      * @param $root
      * @param array $files
@@ -113,77 +101,87 @@ class myself_Codebase extends core_Manager
 
                 if ($entry == "." || $entry == "..") continue;
 
-
                 $entry = $root . DIRECTORY_SEPARATOR . $entry;
 
                 if(is_dir($entry)) {
+
                     self::readFiles($entry, $files);
+
                     continue;
                 }
-
                 $files[$entry] = $entry;
-
             }
-
             closedir($handle);
         }
     }
-
     /**
      * @param $root
      * @param $f
+     * @param array $methods
      * @return bool
      */
-    static function loadClasses ($root,$f)
+    static function loadClasses($root, $f, &$methods=array())
     {
         $ext = fileman_Files::getExt($f);
 
         $classLoadResult = FALSE;
 
         if(($ext === 'php') && (bool)strpos($f,'.class.php')) {
-            $className = str_replace($root, '', $f);
 
+            $className = str_replace($root, '', $f);
 
             $className = str_replace(DIRECTORY_SEPARATOR, '_', trim($className, DIRECTORY_SEPARATOR));
 
             $className = str_replace(".class.php", '', $className);
 
-            try {
+            $class = new ReflectionClass($className);
 
+            $methods[] = $class->getMethods();
+
+            foreach($methods[0] as $id => $m) {
+                if(strtolower(trim($m->class)) != strtolower(trim($className))) {
+                    unset($methods[0][$id]);
+                }
+                bp($methods);
+            }
+
+
+            try {
                 @cls::load($className,TRUE);
 
                 $classLoadResult = TRUE;
 
             } catch (Error $e) {
-
             }
-
         }
-        return $classLoadResult;
 
+        return $classLoadResult;
     }
 
+
     /**
-     * @param $f
+     * @param string $f
      * @return int
      */
     static function emptyLineCounter ($f)
     {
-        $emptyLine = 0;
+        $emptyLines = 0;
+
         $handle = fopen("$f", "r");
+
         if ($handle) {
+
             while (($line = fgets($handle)) !== false) {
+
                 if((trim($line) == NULL)){
-                    $emptyLine++;
+
+                    $emptyLines++;
                 }
             }
             fclose($handle);
         } else {
             return 'Error opening file';
         }
-
-        return $emptyLine;
-
+        return $emptyLines;
     }
-
 }
