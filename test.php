@@ -4,8 +4,5 @@
 //
 //fclose($myfile);
 
-
-
-
-Reflection::export(new ReflectionClass('Exception'));
-?>
+$a=TRUE;
+echo "<li>".$a.var_dump($a);
