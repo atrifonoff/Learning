@@ -11,7 +11,7 @@
  * @copyright 2006 - 2017 Experta OOD
  * @license   GPL 3
  * @since     v 0.1
- * @title     Документи » Създадени документи по роли
+ * @title     Документи » Създадени документи по роля
  */
 class doc_reports_DocsByRols extends frame2_driver_TableData
 {
@@ -36,7 +36,6 @@ class doc_reports_DocsByRols extends frame2_driver_TableData
         $fieldset->FLD('documents', 'keylist(mvc=core_Classes,select=name)', 'caption=Документи,after=to');
     }
 
-
     /**
      * Кои записи ще се показват в таблицата
      *
@@ -46,26 +45,62 @@ class doc_reports_DocsByRols extends frame2_driver_TableData
      */
     protected function prepareRecs($rec, &$data = NULL)
     {
+
+
         $recs = array();
 
-       // $rolesWithUsers = core_Users::getRolesWithUsers();
-        $usersWithThisRole = core_Users::getByRole($rec->roleId);
-        bp($usersWithThisRole);
+        $query = doc_Containers::getQuery();
 
-        $query = doc_Containers::getQuery($rec->roleId);
-       // bp($query);
+
 
         $query->where(array("#createdOn >= '[#1#]' AND #createdOn <= '[#2#]'", $rec->from, $rec->to ));
 
+        $query->where("#state != 'rejected'");
 
-      //  $query->where(array("#role == '[#1#]'", $rec->role));
 
-bp($query->count());
+
+        if(isset( $rec->documents)){
+
+            $documentsForCheck = type_Keylist::toArray($rec->documents);
+
+            $query->whereArr("docClass", $documentsForCheck, TRUE);
+
+        }
+
+        $query->in('createdBy', core_Users::getByRole($rec->roleId));
+
+        //  bp(core_Users::getByRole($rec->roleId));
+        // $documentsEkstracted  = $query->fetchAll();
+
+        $recs = array();
+//bp($query->where, $query->count());
+        foreach ($query->fetchAll() as $doc){
+
+//            $recs[($doc->docClass)][] = $doc;
+            $recs[$doc->docClass]['users'] =  type_Keylist::addKey($recs[$doc->docClass]['users'], $doc->createdBy);
+            $recs[$doc->docClass]['cnt']++;
+            $recs[$doc->docClass]['docClass'] = $doc->docClass;
+
+        }
+//bp($recs);
+
+//        while($rec = $query->fetch()){
+//
+//
+//           $recs[($query->fetch()->docClass)]++;
+//
+//
+//        };
+
+
+
+        // bp($recs);
+        //bp(count($documentsEkstracted),$documentsEkstracted[119],$documentsEkstracted[119]->docClass);
+
+        //  bp(count($recs),self::getClassId(),$linkFordoc);
 
         return $recs;
     }
-
-
 
 
 
@@ -81,16 +116,16 @@ bp($query->count());
         $fld = cls::get('core_FieldSet');
 
         if($export === FALSE){
-            $fld->FLD('num', 'varchar','caption=№');
+            //  $fld->FLD('num', 'varchar','caption=№');
             $fld->FLD('person', 'varchar', 'caption=Служител');
-            $fld->FLD('indicator', 'varchar', 'caption=Показател');
-            $fld->FLD('value', 'double(smartRound,decimals=2)', 'smartCenter,caption=Стойност');
+            $fld->FLD('indicator', 'varchar', 'caption=Тип документ');
+            $fld->FLD('value', 'double(smartRound,decimals=2)', 'smartCenter,caption=Брой');
 
         } else {
-            $fld->FLD('num', 'varchar','caption=№');
+            //    $fld->FLD('num', 'varchar','caption=№');
             $fld->FLD('person', 'varchar', 'caption=Служител');
-            $fld->FLD('indicator', 'varchar', 'caption=Показател');
-            $fld->FLD('value', 'double(smartRound,decimals=2)', 'smartCenter,caption=Стойност');
+            $fld->FLD('indicator', 'varchar', 'caption=Тип документ');
+            $fld->FLD('value', 'double(smartRound,decimals=2)', 'smartCenter,caption=Брой');
         }
 
         return $fld;
@@ -106,13 +141,28 @@ bp($query->count());
      */
     protected function detailRecToVerbal($rec, &$dRec)
     {
-        $isPlain = Mode::is('text', 'plain');
+//bp($dRec);
         $Int = cls::get('type_Int');
+
+        $row = new stdClass();
+
+        $row->person = core_Users::getNick(1);
+
+        $row->value = $Int->toVerbal($dRec['cnt']);
+
+        $row->indicator = cls::get($dRec['docClass'])->className;
+
+        return $row;
+
+
+
+        $isPlain = Mode::is('text', 'plain');
+
         $Date = cls::get('type_Date');
         $Double = cls::get('type_Double');
         $Double->params['decimals'] = 2;
         $row = new stdClass();
-
+        $Varchar = cls::get('type_Varchar');
 
         // Линк към служителя
         if(isset($dRec->person)) {
@@ -137,6 +187,11 @@ bp($query->count());
         if(isset($dRec->value)) {
             $row->value = $Double->toVerbal($dRec->value);
         }
+
+//bp($dRec, $rec);
+        $row->person = core_Users::getNick($rec->createdBy);
+        $row->indicator = 'something';
+        $row->value= '2123456789';
 
         return $row;
     }
